@@ -287,11 +287,23 @@ class GtpConnection:
         else
             self.respond("unknown")
 
-    def gogui_rules_legal_moves_cmd(self, args):
+    def gogui_rules_legal_moves_cmd(self, args: List[str]):
         """ Implement this function for Assignment 1 """
-        self.respond()
-        return
-
+        
+        moves: List[GO_POINT] = GoBoardUtil.generate_legal_moves(self.board, self.board.current_player)
+        gtp_moves: List[str] = []
+        for move in moves:
+            coords: Tuple[int, int] = point_to_coord(move, self.board.size)
+            gtp_moves.append(format_point(coords))
+        sorted_moves = " ".join(sorted(gtp_moves))
+        if len(sorted_moves) == 0:
+            self.respond('[]')
+            return []
+        else:   
+            self.respond(sorted_moves)
+            return sorted_moves
+        
+        
     def play_cmd(self, args: List[str]) -> None:
         """
         play a move args[1] for given color args[0] in {'b','w'}

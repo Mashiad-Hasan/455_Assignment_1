@@ -282,8 +282,8 @@ class GtpConnection:
     """
     def gogui_rules_final_result_cmd(self, args):
         """ Implement this function for Assignment 1 """
-        if legal_moves().is_empty():
-            self.respond("black" if self.board.current_player=="b" else "white")
+        if len(GoBoardUtil.generate_legal_moves(self.board, self.board.current_player))==0:
+            self.respond("black" if self.board.current_player=="w" else "white")
         else
             self.respond("unknown")
 
@@ -313,9 +313,9 @@ class GtpConnection:
             board_move = args[1]
             color = color_to_int(board_color)
             if args[1].lower() == "pass":
-                self.board.play_move(PASS, color)
-                self.board.current_player = opponent(color)
-                self.respond()
+                # self.board.play_move(PASS, color)
+                # self.board.current_player = opponent(color)
+                self.respond('Illegal Move: "wrong coordinate" reason')
                 return
             coord = move_to_coord(args[1], self.board.size)
             move = coord_to_point(coord[0], coord[1], self.board.size)

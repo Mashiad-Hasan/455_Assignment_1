@@ -114,7 +114,7 @@ class GoBoard(object):
             return False
         board_copy: GoBoard = self.copy()
         can_play_move = board_copy.play_move(point, color)
-        return can_play_move
+        return (can_play_move==0)
 
     def end_of_game(self) -> bool:
         return self.last_move == PASS \
@@ -228,20 +228,34 @@ class GoBoard(object):
                 #single_capture = nb_point
         return False #single_capture
 
+    ill_msg=["wrong color","wrong coordinate","occupied","capture","suicide"]
+
+    def get_illegal_message(self, no: int) -> str:
+        return ill_msg[no-1]
+
     def play_move(self, point: GO_POINT, color: GO_COLOR) -> bool:
         """
         Play a move of color on point
         Returns whether move was legal
         """
-        if not self._is_legal_check_simple_cases(point, color):
-            return False
+        # if not self._is_legal_check_simple_cases(point, color):
+        #     return False
+        if (not is_black_white(color)):
+            return 1
+        # Could just return False for out-of-bounds, 
+        # but it is better to know if this is called with an illegal point
+        if (not self.pt(1, 1) <= point <= self.pt(self.size, self.size)):
+            return 2
+        assert is_black_white_empty(self.board[point])
+        if self.board[point] != EMPTY:
+            return 3
         # Special cases
         if point == PASS:
             #self.ko_recapture = NO_POINT
             #self.current_player = opponent(color)
             #self.last2_move = self.last_move
             #self.last_move = point
-            return False
+            return 2
 
         # General case: deal with captures, suicide, and next ko point
         opp_color = opponent(color)
@@ -254,20 +268,20 @@ class GoBoard(object):
                 #single_capture 
                 captured = self._detect_and_process_capture(nb)
                 if captured == True:
-                    return False
+                    return 4
                 #if single_capture != NO_POINT:
                     #single_captures.append(single_capture)
         block = self._block_of(point)
         if not self._has_liberty(block):  # undo suicide move
             self.board[point] = EMPTY
-            return False
+            return 5
         self.ko_recapture = NO_POINT
         #if in_enemy_eye and len(single_captures) == 1:
             #self.ko_recapture = single_captures[0]
         self.current_player = opponent(color)
         self.last2_move = self.last_move
         self.last_move = point
-        return True
+        return 0
 
     def neighbors_of_color(self, point: GO_POINT, color: GO_COLOR) -> List:
         """ List of neighbors of point of given color """

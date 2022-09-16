@@ -282,7 +282,10 @@ class GtpConnection:
     """
     def gogui_rules_final_result_cmd(self, args):
         """ Implement this function for Assignment 1 """
-        self.respond("unknown")
+        if legal_moves().is_empty():
+            self.respond("black" if self.board.current_player=="b" else "white")
+        else
+            self.respond("unknown")
 
     def gogui_rules_legal_moves_cmd(self, args):
         """ Implement this function for Assignment 1 """

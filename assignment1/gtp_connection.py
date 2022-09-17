@@ -282,7 +282,10 @@ class GtpConnection:
     """
     def gogui_rules_final_result_cmd(self, args):
         """ Implement this function for Assignment 1 """
-        self.respond("unknown")
+        if len(GoBoardUtil.generate_legal_moves(self.board, self.board.current_player))==0:
+            self.respond("black" if self.board.current_player==WHITE else "white")
+        else:
+            self.respond("unknown")
 
     def gogui_rules_legal_moves_cmd(self, args: List[str]):
         """ Implement this function for Assignment 1 """
@@ -310,14 +313,19 @@ class GtpConnection:
             board_move = args[1]
             color = color_to_int(board_color)
             if args[1].lower() == "pass":
-                self.board.play_move(PASS, color)
-                self.board.current_player = opponent(color)
-                self.respond()
+                # self.board.play_move(PASS, color)
+                # self.board.current_player = opponent(color)
+                self.respond('Illegal Move: "{}" wrong coordinate'.format(" ".join(args)))
                 return
-            coord = move_to_coord(args[1], self.board.size)
+            try:
+                coord = move_to_coord(args[1], self.board.size)
+            except ValueError:
+                self.respond('Illegal Move: "{}" wrong coordinate'.format(" ".join(args)))
+                return
             move = coord_to_point(coord[0], coord[1], self.board.size)
-            if not self.board.play_move(move, color):
-                self.respond("Illegal Move: {}".format(board_move))
+            play_stat = self.board.play_move(move, color)
+            if (not play_stat==0):
+                self.respond('Illegal Move: "{}" {}'.format(" ".join(args), self.board.get_illegal_message(play_stat)))
                 return
             else:
                 self.debug_msg(
@@ -338,7 +346,8 @@ class GtpConnection:
             self.board.play_move(move, color)
             self.respond(move_as_string)
         else:
-            self.respond("Illegal move: {}".format(move_as_string))
+            # self.respond("Illegal move: {}".format(move_as_string))
+            self.respond("resign")
 
     """
     ==========================================================================

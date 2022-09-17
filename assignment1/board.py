@@ -231,9 +231,9 @@ class GoBoard(object):
     ill_msg=["wrong color","wrong coordinate","occupied","capture","suicide"]
 
     def get_illegal_message(self, no: int) -> str:
-        return ill_msg[no-1]
+        return self.ill_msg[no-1]
 
-    def play_move(self, point: GO_POINT, color: GO_COLOR) -> bool:
+    def play_move(self, point: GO_POINT, color: GO_COLOR) -> int:
         """
         Play a move of color on point
         Returns whether move was legal
@@ -241,6 +241,8 @@ class GoBoard(object):
         # if not self._is_legal_check_simple_cases(point, color):
         #     return False
         if (not is_black_white(color)):
+            return 1
+        if (color != self.current_player):
             return 1
         # Could just return False for out-of-bounds, 
         # but it is better to know if this is called with an illegal point
@@ -268,6 +270,7 @@ class GoBoard(object):
                 #single_capture 
                 captured = self._detect_and_process_capture(nb)
                 if captured == True:
+                    self.board[point] = EMPTY
                     return 4
                 #if single_capture != NO_POINT:
                     #single_captures.append(single_capture)

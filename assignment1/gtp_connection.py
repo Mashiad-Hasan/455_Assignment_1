@@ -283,8 +283,8 @@ class GtpConnection:
     def gogui_rules_final_result_cmd(self, args):
         """ Implement this function for Assignment 1 """
         if len(GoBoardUtil.generate_legal_moves(self.board, self.board.current_player))==0:
-            self.respond("black" if self.board.current_player=="w" else "white")
-        else
+            self.respond("black" if self.board.current_player==WHITE else "white")
+        else:
             self.respond("unknown")
 
     def gogui_rules_legal_moves_cmd(self, args: List[str]):
@@ -319,8 +319,9 @@ class GtpConnection:
                 return
             coord = move_to_coord(args[1], self.board.size)
             move = coord_to_point(coord[0], coord[1], self.board.size)
-            if not self.board.play_move(move, color):
-                self.respond("Illegal Move: {}".format(board_move))
+            play_stat = self.board.play_move(move, color)
+            if (not play_stat==0):
+                self.respond("Illegal Move: {}".format(self.board.get_illegal_message(play_stat)))
                 return
             else:
                 self.debug_msg(
@@ -341,7 +342,8 @@ class GtpConnection:
             self.board.play_move(move, color)
             self.respond(move_as_string)
         else:
-            self.respond("Illegal move: {}".format(move_as_string))
+            # self.respond("Illegal move: {}".format(move_as_string))
+            self.respond("resign")
 
     """
     ==========================================================================

@@ -315,13 +315,17 @@ class GtpConnection:
             if args[1].lower() == "pass":
                 # self.board.play_move(PASS, color)
                 # self.board.current_player = opponent(color)
-                self.respond('Illegal Move: "wrong coordinate" reason')
+                self.respond('Illegal Move: "{}" wrong coordinate'.format(" ".join(args)))
                 return
-            coord = move_to_coord(args[1], self.board.size)
+            try:
+                coord = move_to_coord(args[1], self.board.size)
+            except ValueError:
+                self.respond('Illegal Move: "{}" wrong coordinate'.format(" ".join(args)))
+                return
             move = coord_to_point(coord[0], coord[1], self.board.size)
             play_stat = self.board.play_move(move, color)
             if (not play_stat==0):
-                self.respond("Illegal Move: {}".format(self.board.get_illegal_message(play_stat)))
+                self.respond('Illegal Move: "{}" {}'.format(" ".join(args), self.board.get_illegal_message(play_stat)))
                 return
             else:
                 self.debug_msg(

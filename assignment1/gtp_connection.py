@@ -297,7 +297,7 @@ class GtpConnection:
             gtp_moves.append(format_point(coords))
         sorted_moves = " ".join(sorted(gtp_moves))
         if len(sorted_moves) == 0:
-            self.respond('[]')
+            self.respond('')
             return []
         else:   
             self.respond(sorted_moves)
@@ -315,17 +315,17 @@ class GtpConnection:
             if args[1].lower() == "pass":
                 # self.board.play_move(PASS, color)
                 # self.board.current_player = opponent(color)
-                self.respond('Illegal Move: "{}" wrong coordinate'.format(" ".join(args)))
+                self.respond('illegal move: "{}" wrong coordinate'.format(" ".join(args)))
                 return
             try:
                 coord = move_to_coord(args[1], self.board.size)
             except ValueError:
-                self.respond('Illegal Move: "{}" wrong coordinate'.format(" ".join(args)))
+                self.respond('illegal move: "{}" wrong coordinate'.format(" ".join(args)))
                 return
             move = coord_to_point(coord[0], coord[1], self.board.size)
             play_stat = self.board.play_move(move, color)
             if (not play_stat==0):
-                self.respond('Illegal Move: "{}" {}'.format(" ".join(args), self.board.get_illegal_message(play_stat)))
+                self.respond('illegal move: "{}" {}'.format(" ".join(args), self.board.get_illegal_message(play_stat)))
                 return
             else:
                 self.debug_msg(
@@ -346,7 +346,7 @@ class GtpConnection:
             self.board.play_move(move, color)
             self.respond(move_as_string)
         else:
-            # self.respond("Illegal move: {}".format(move_as_string))
+            # self.respond("illegal move: {}".format(move_as_string))
             self.respond("resign")
 
     """
